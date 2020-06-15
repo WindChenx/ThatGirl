@@ -4,6 +4,6 @@ api:<a href="https://gank.io/api/v2/data/category/Girl/type/Girl/page/1/count/10
 
 #### 页面展示
 <div>
-<img src="https://github.com/WindChenx/ThatGirl/images/girl.jpg" height="650" width="350">
+<img src="https://github.com/WindChenx/ThatGirl/blob/master/images/girl.jpg" height="650" width="350">
 </div>
 
