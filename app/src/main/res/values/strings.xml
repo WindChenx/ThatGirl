@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ThatGirl</string>
+    <string name="nav_call">电话</string>
+    <string name="nav_location">位置</string>
+    <string name="nav_email">邮件</string>
+
+</resources>
