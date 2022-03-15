@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.thatgirl.R;
+import com.example.thatgirl.contract.OnItemListener;
 import com.example.thatgirl.entity.Girl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -20,18 +22,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class GirlAdapter extends RecyclerView.Adapter<GirlAdapter.ViewHolder> {
     private Context context;
-    private List<Girl.DataBean> girlList;
-    private static AdapterView.OnItemClickListener mItemClick;
-
-
-    public static void setItemClick(AdapterView.OnItemClickListener itemClick) {
-        mItemClick = itemClick;
-    }
+    private List<Girl> girlList;
+    private OnItemListener mOnItemListener;
 
 
 
-    public GirlAdapter(Context context,List<Girl.DataBean> girlList) {
+    public GirlAdapter(Context context,List<Girl> girlList, OnItemListener onItemListener) {
         this.girlList = girlList;
+        mOnItemListener = onItemListener;
     }
 
     @NonNull
@@ -47,9 +45,14 @@ public class GirlAdapter extends RecyclerView.Adapter<GirlAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        Girl.DataBean girlBean=girlList.get(position);
-        holder.textView_girl.setText(girlBean.getDesc());
-        Glide.with(context).load(girlBean.getUrl()).into(holder.imageView_gril);
+        holder.mGirlItem = girlList.get(position);
+        holder.textView_girl.setText(holder.mGirlItem.getDesc());
+        Glide.with(context).load(holder.mGirlItem.getUrl()).into(holder.imageView_gril);
+        holder.itemView.setOnClickListener(v -> {
+            if (mOnItemListener != null) {
+                mOnItemListener.onItemClick(holder.mGirlItem);
+            }
+        });
     }
 
     @Override
@@ -57,7 +60,13 @@ public class GirlAdapter extends RecyclerView.Adapter<GirlAdapter.ViewHolder> {
         return girlList.size();
     }
 
+    public void setDataList(ArrayList<Girl> girlList) {
+        this.girlList = girlList;
+        notifyDataSetChanged();
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder{
+        public Girl mGirlItem;
         ImageView imageView_gril;
         TextView textView_girl;
 

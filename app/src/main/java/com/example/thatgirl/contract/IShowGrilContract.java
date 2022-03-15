@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public interface IShowGrilContract {
     interface View extends BaseView{
-        void setGirlsList(ArrayList<Girl.DataBean> girlsListBeans);
+        void setGirlsList(ArrayList<Girl> girlsListBeans);
     }
     interface Presenter extends IPresenter<View>{
         void  show(int pageNum);

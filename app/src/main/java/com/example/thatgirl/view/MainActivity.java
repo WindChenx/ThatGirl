@@ -30,17 +30,12 @@ import java.util.List;
 public class MainActivity extends BaseActivity implements BaseView {
     private static final String TAG = "MainActivity";
 
-    private List<Girl.DataBean> girlList=new ArrayList<>();
 //    private ShowContentPresenter showContentPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
-
     }
 
     @Override

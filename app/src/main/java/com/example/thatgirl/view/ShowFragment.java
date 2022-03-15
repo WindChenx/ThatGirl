@@ -1,6 +1,7 @@
 package com.example.thatgirl.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.sax.EndElementListener;
 import android.util.Log;
@@ -8,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.thatgirl.DetailActivity;
 import com.example.thatgirl.R;
 import com.example.thatgirl.adapter.GirlAdapter;
+import com.example.thatgirl.contract.OnItemListener;
 import com.example.thatgirl.entity.Girl;
 import com.example.thatgirl.model.https.api.ApiService;
 import com.example.thatgirl.model.https.api.RetrofitFactory;
@@ -41,9 +44,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 
-public class ShowFragment  extends Fragment {
+public class ShowFragment  extends Fragment implements OnItemListener {
     private GirlAdapter girlAdapter;
-    private ArrayList<Girl.DataBean> girlList=new ArrayList<>();
+    private ArrayList<Girl> girlList=new ArrayList<>();
     Context context=getContext();
     RecyclerView recyclerView;
     private List<Integer> mHeight;
@@ -62,7 +65,7 @@ public class ShowFragment  extends Fragment {
          swipeRefreshLayout=view.findViewById(R.id.swip_refresh);
         StaggeredGridLayoutManager layoutManager=new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-        girlAdapter=new GirlAdapter(context,girlList);
+        girlAdapter=new GirlAdapter(context,girlList,this);
         recyclerView.setAdapter(girlAdapter);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -102,6 +105,14 @@ public class ShowFragment  extends Fragment {
     public void setLoadMoreEnable(boolean enable) {
         this.enable = enable;
     }
+
+    @Override
+    public void onItemClick(Girl girlItem) {
+        Intent intent = new Intent(getContext(), DetailActivity.class);
+        intent.putExtra("image_detail_url",girlItem.getUrl());
+        startActivity(intent);
+    }
+
     public interface RecyclerViewLoadMoreListener {
         public void onLoadMore();
     }
@@ -151,7 +162,7 @@ public class ShowFragment  extends Fragment {
                         for (Element element : images) {
 //                            Log.d("TAG","-------"+element);
 
-                            Girl.DataBean dataBean=new Girl.DataBean();
+                            Girl dataBean=new Girl();
                             String describe = element.select("img").attr("alt");
                             String url = element.select("img").attr("src");
                             dataBean.setDesc(describe);
@@ -161,8 +172,7 @@ public class ShowFragment  extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                recyclerView.setAdapter(new GirlAdapter(context,girlList));
-                                girlAdapter.notifyDataSetChanged();
+                                girlAdapter.setDataList(girlList);
 
                             }
                         });
