@@ -1,15 +1,19 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
 
     defaultConfig {
         applicationId "com.example.thatgirl"
         minSdkVersion 16
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -46,5 +50,6 @@ dependencies {
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-rc01'
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'org.jsoup:jsoup:1.11.3'
 
 }

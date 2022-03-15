@@ -17,6 +17,10 @@ import com.example.thatgirl.model.https.api.RetrofitFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,10 +34,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+
 
 public class ShowFragment  extends Fragment {
     private GirlAdapter girlAdapter;
@@ -42,7 +48,7 @@ public class ShowFragment  extends Fragment {
     RecyclerView recyclerView;
     private List<Integer> mHeight;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private int pageNumber = 1;
+    private int pageNumber = 2;
     boolean enable=true;
     private RecyclerViewLoadMoreListener mRecyclerViewLoadMoreListener;
     private boolean refresh=false;
@@ -61,7 +67,6 @@ public class ShowFragment  extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                
                 reloading();
             }
         });
@@ -102,9 +107,8 @@ public class ShowFragment  extends Fragment {
     }
 
     private void reloading() {
-pageNumber=1;
-girlList.clear();
-
+        pageNumber=2;
+        girlList.clear();
         initData();
     }
 
@@ -112,7 +116,7 @@ girlList.clear();
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         initData();
-        loadMore();
+//        loadMore();
 
     }
 
@@ -123,26 +127,49 @@ girlList.clear();
 
     }
 
+    /**
+     * 解析数据参考
+     * https://blog.csdn.net/u011546032/article/details/82561464
+     */
     private void initData() {
-        ApiService apiService= RetrofitFactory.createRequest();
-        Call<ResponseBody> call = null;
-        if(loadmore){
-            call= apiService.getGirl(pageNumber);
-            loadmore=false;
-        }else {
-            call= apiService.getGirl(1);
-        }
-       
-        call.enqueue(new Callback<ResponseBody>() {
+//        ApiService apiService= RetrofitFactory.createRequest();
+        Request request = new Request.Builder().url("https://www.msgao.com/meinv/index_2.html")
+                .method("GET",null).build();
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Call call = okHttpClient.newCall(request);
+
+        call.enqueue(new Callback() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) throws IOException {
                 if(response.body()!=null){
                     String result;
                     try {
                         result = response.body().string();
-                        Log.d("Tag",result);
-                        parseJson(result);
-                        girlAdapter.notifyDataSetChanged();
+                        Document document = Jsoup.parse(result);
+                        Elements elements = document.getElementsByClass("warp clearfix mt14");
+                        List<Element> images = elements.select("#mainbodypul > div");
+                        for (Element element : images) {
+//                            Log.d("TAG","-------"+element);
+
+                            Girl.DataBean dataBean=new Girl.DataBean();
+                            String describe = element.select("img").attr("alt");
+                            String url = element.select("img").attr("src");
+                            dataBean.setDesc(describe);
+                            dataBean.setUrl(url);
+                            girlList.add(dataBean);
+                        }
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclerView.setAdapter(new GirlAdapter(context,girlList));
+                                girlAdapter.notifyDataSetChanged();
+
+                            }
+                        });
+
+//                        Log.d("Tag",images);
+//                        parseJson(result);
+//                        girlAdapter.notifyDataSetChanged();
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -156,44 +183,10 @@ girlList.clear();
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
 
             }
         });
-    }
-
-    private void parseJson(String result) {
-        try {
-            JSONObject jsonObject=new JSONObject(result);
-            JSONArray list=jsonObject.optJSONArray("data");
-
-
-            for(int i=0;i<list.length();i++ ){
-                JSONObject  jsonObject1= (JSONObject) list.get(i);
-
-                if(jsonObject1!=null){
-                    Girl.DataBean dataBean=new Girl.DataBean();
-                    dataBean.setDesc(jsonObject1.getString("desc"));
-                    dataBean.setUrl(jsonObject1.getString("url"));
-                    Log.d("Tag",jsonObject1.getString("url"));
-                    girlList.add(dataBean);
-                }
-
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-//        this.getActivity().runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                recyclerView.setAdapter(new GirlAdapter(context,girlList));
-//
-//            }
-//        });
-
-
     }
 
 

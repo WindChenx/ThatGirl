@@ -9,13 +9,13 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface ApiService {
-    String Host_URL="https://gank.io";
+    String Host_URL="https://www.msgao.com/meinv/";
 
     /**
      * 获取girl
      * @param pageNumber
      * @return
      */
-    @GET("/api/v2/data/category/Girl/type/Girl/page/{pageNum}/count/10")
+    @GET("index_{pageNum}.html")
     Call<ResponseBody> getGirl(@Path("pageNum")int pageNumber);
 }

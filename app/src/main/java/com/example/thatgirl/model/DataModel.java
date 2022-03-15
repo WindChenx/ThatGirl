@@ -1,5 +1,7 @@
 package com.example.thatgirl.model;
 
+import android.view.View;
+
 import com.example.thatgirl.entity.Girl;
 import com.example.thatgirl.model.helper.NetworkHelper;
 
