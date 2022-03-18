@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.thatgirl.DetailActivity;
+import com.example.thatgirl.GirlApplication;
 import com.example.thatgirl.R;
 import com.example.thatgirl.adapter.GirlAdapter;
 import com.example.thatgirl.contract.OnItemListener;
@@ -28,6 +29,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -56,6 +58,11 @@ public class ShowFragment  extends Fragment implements OnItemListener {
     private RecyclerViewLoadMoreListener mRecyclerViewLoadMoreListener;
     private boolean refresh=false;
     private boolean loadmore=false;
+
+    public static ShowFragment newInstance() {
+        ShowFragment showFragment = new ShowFragment();
+        return showFragment;
+    }
     
     @Nullable
     @Override
@@ -120,13 +127,13 @@ public class ShowFragment  extends Fragment implements OnItemListener {
     private void reloading() {
         pageNumber=2;
         girlList.clear();
-        initData();
+        initData(String.valueOf(pageNumber));
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        initData();
+        initData(String.valueOf(2));
 //        loadMore();
 
     }
@@ -134,7 +141,7 @@ public class ShowFragment  extends Fragment implements OnItemListener {
     private void loadMore() {
         loadmore=true;
         pageNumber+=1;
-        initData();
+        initData(String.valueOf(pageNumber));
 
     }
 
@@ -142,9 +149,9 @@ public class ShowFragment  extends Fragment implements OnItemListener {
      * 解析数据参考
      * https://blog.csdn.net/u011546032/article/details/82561464
      */
-    private void initData() {
+    private void initData(String url) {
 //        ApiService apiService= RetrofitFactory.createRequest();
-        Request request = new Request.Builder().url("https://www.msgao.com/meinv/index_2.html")
+        Request request = new Request.Builder().url("https://www.msgao.com/meinv/index_"+url+".html")
                 .method("GET",null).build();
         OkHttpClient okHttpClient = new OkHttpClient();
         Call call = okHttpClient.newCall(request);

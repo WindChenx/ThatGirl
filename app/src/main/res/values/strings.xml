@@ -3,5 +3,7 @@
     <string name="nav_call">电话</string>
     <string name="nav_location">位置</string>
     <string name="nav_email">邮件</string>
+    <string name="navigation_drawer_open">打开</string>
+    <string name="navigation_drawer_close">关闭</string>
 
 </resources>

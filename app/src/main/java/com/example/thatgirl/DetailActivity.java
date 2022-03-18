@@ -28,6 +28,11 @@ public class DetailActivity extends BaseActivity {
     }
 
     @Override
+    protected void initView() {
+
+    }
+
+    @Override
     protected void onClick() {
 
     }

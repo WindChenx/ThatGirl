@@ -5,6 +5,7 @@ import android.os.PersistableBundle;
 
 import com.example.thatgirl.base.presenter.IPresenter;
 import com.example.thatgirl.base.view.BaseView;
+import com.example.thatgirl.model.SpStorage;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,7 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
     protected abstract int getLayout();
     protected abstract void onViewCreated();
     protected abstract void initData();
+    protected abstract void initView();
     protected abstract void onClick();
 //    void showNormal();
 //    void showError();
